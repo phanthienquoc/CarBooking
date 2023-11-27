@@ -33,8 +33,8 @@ namespace CarBookingAPI.Controllers.DonHang
             "Loại tài khoản = 0 là tài xế, loại tài khoản = 1 là khách hàng.")]
         public async Task<IActionResult> TaoDonHangAsync(TaoDonHangVM donHang)
         {
-            SocketServiceTaiXe.DonHangThatBai = false;
-            SocketServiceTaiXe.TaiXeChapNhan = false;
+            WebSocketService.DonHangThatBai = false;
+            WebSocketService.TaiXeChapNhan = false;
             var timeout = TimeSpan.FromSeconds(10);
             var cancellationToken = new CancellationTokenSource(timeout);
 
@@ -44,10 +44,10 @@ namespace CarBookingAPI.Controllers.DonHang
                 var chiTietDonHang = _iMapper.Map<ChiTietDonHangDTO, ChiTietDonHangVM>(chiTietDonHangDto);
 
                 // broadcast thong tin don hang cho tai xe
-                SocketServiceTaiXe.GuiChiTietDonHangChoTaiXe(chiTietDonHang);
+                WebSocketService.GuiChiTietDonHangChoTaiXe(chiTietDonHang);
 
                 // cho tai xe chap nhan don hang
-                while (SocketServiceTaiXe.TaiXeChapNhan == false)
+                while (WebSocketService.TaiXeChapNhan == false)
                 {
                     Thread.Sleep(8000);
                     cancellationToken.Token.ThrowIfCancellationRequested();
@@ -57,7 +57,7 @@ namespace CarBookingAPI.Controllers.DonHang
 
             catch (OperationCanceledException)
             {
-                SocketServiceTaiXe.DonHangThatBai = true;
+                WebSocketService.DonHangThatBai = true;
                 DonHangService.DonHangDangXuLy = null;
 
                 return BadRequest("Tất cả tài xế đều đang bận");

@@ -44,7 +44,7 @@ namespace CarBookingAPI.Controllers.TaiXe
         public IActionResult ChapNhanDonHang(string soDienThoaiTaiXe)
         {
             // xoa tai xe khoi message queue
-            if (SocketServiceTaiXe.DonHangThatBai == false)
+            if (WebSocketService.DonHangThatBai == false)
             {
                 _taiXeService.XoaTaiXeKhoiMessageQueue(soDienThoaiTaiXe);
                 return Ok("Đã chấp nhận đơn hàng");
@@ -64,7 +64,7 @@ namespace CarBookingAPI.Controllers.TaiXe
             var chiTietDonHang = _iMapper.Map<ChiTietDonHangDTO, ChiTietDonHangVM>(chiTietDonHangDto);
 
             // broadcast thong tin don hang cho tai xe
-            SocketServiceTaiXe.GuiChiTietDonHangChoTaiXe(chiTietDonHang);
+            WebSocketService.GuiChiTietDonHangChoTaiXe(chiTietDonHang);
 
             return Ok("Đã từ chối đơn hàng");
         }
